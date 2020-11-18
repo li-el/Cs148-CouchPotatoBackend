@@ -98,7 +98,7 @@ def login():
     return jsonify(response), status
 
 @app.route('/api/signup/', methods=['POST'])
-def login():
+def signup():
     response = {}
     #only accept json content type
     if request.headers['content-type'] != 'application/json':
