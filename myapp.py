@@ -100,9 +100,9 @@ def login():
 @app.route('/api/signup/', methods=['POST'])
 def signup():
     
-    database = firebase.database()
-    data = {"name": "Reginald DingleTuft"}
-    database.push(data)
+    #database = firebase.database()
+    #data = {"name": "Reginald DingleTuft"}
+    #database.push(data)
     response = {}
     #only accept json content type
     if request.headers['content-type'] != 'application/json':
@@ -116,9 +116,9 @@ def signup():
     password = data['password']
     if email and password:
         try:
-            auth = firebase.auth()
-            user = auth.create_user_with_email_and_password(email, password)
-            response["MESSAGE"]= "Account Created".format(email,password)
+            #auth = firebase.auth()
+            #user = auth.create_user_with_email_and_password(email, password)
+            response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
             status = 200
         except requests.exceptions.HTTPError as error:
             error_json = e.args[1]
