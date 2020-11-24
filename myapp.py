@@ -116,8 +116,8 @@ def signup():
     password = data['password']
     if email and password:
         try:
-            auth = firebase.auth()
-            user = auth.create_user_with_email_and_password(email, password)
+           # auth = firebase.auth()
+           # user = auth.create_user_with_email_and_password(email, password)
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
             status = 200
         except requests.exceptions.HTTPError as error:
@@ -127,6 +127,9 @@ def signup():
                 response["MESSAGE"]= "Email Already Exists"
             else:
                 response["MESSAGE"]= "Error Creating Account"
+        except Exception as e:
+            status = 400
+            response["MESSAGE"] = str(e)
     else:
         status = 400
         response["MESSAGE"]= "Enter both email and password"
