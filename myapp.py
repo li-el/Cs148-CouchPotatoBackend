@@ -99,6 +99,10 @@ def login():
 
 @app.route('/api/signup/', methods=['POST'])
 def signup():
+    
+    database = firebase.database()
+    data = {"name": "Reginald DingleTuft"}
+    database.push(data)
     response = {}
     #only accept json content type
     if request.headers['content-type'] != 'application/json':
