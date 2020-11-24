@@ -88,10 +88,12 @@ def login():
             user = auth.sign_in_with_email_and_password(email, password)
             response["MESSAGE"]= "Login Succesful"
             status = 200
-        except requests.exceptions.HTTPError as error:
-            error_message = error["error"]["message"]
-            response["MESSAGE"]= "Incorrect Username or Password"
+        except Exception as e:
             status = 400
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = "There was an error signing in" 
     else:
         status = 400
         response["MESSAGE"]= "Incorrect Username or Password"
@@ -100,9 +102,6 @@ def login():
 @app.route('/api/signup/', methods=['POST'])
 def signup():
     
-    #database = firebase.database()
-    #data = {"name": "Reginald DingleTuft"}
-    #database.push(data)
     response = {}
     #only accept json content type
     if request.headers['content-type'] != 'application/json':
@@ -126,13 +125,6 @@ def signup():
                 response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
             except:
                 response["MESSAGE"] = "There was an error creating this account"
-       # except requests.exceptions.HTTPError as error:
-       #     error_json = e.args[1]
-       #     error = json.loads(error_json)['error']['message']
-       #     if error == "EMAIL_EXISTS":
-       #         response["MESSAGE"]= "Email Already Exists"
-       #     else:
-       #         response["MESSAGE"]= "Error Creating Account"
     else:
         status = 400
         response["MESSAGE"]= "Enter both email and password"
