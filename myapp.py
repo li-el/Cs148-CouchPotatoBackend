@@ -120,16 +120,16 @@ def signup():
             user = auth.create_user_with_email_and_password(email, password)
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
             status = 200
-        except requests.exceptions.HTTPError as error:
-            error_json = e.args[1]
-            error = json.loads(error_json)['error']['message']
-            if error == "EMAIL_EXISTS":
-                response["MESSAGE"]= "Email Already Exists"
-            else:
-                response["MESSAGE"]= "Error Creating Account"
         except Exception as e:
             status = 400
             response["MESSAGE"] = str(e)
+       # except requests.exceptions.HTTPError as error:
+       #     error_json = e.args[1]
+       #     error = json.loads(error_json)['error']['message']
+       #     if error == "EMAIL_EXISTS":
+       #         response["MESSAGE"]= "Email Already Exists"
+       #     else:
+       #         response["MESSAGE"]= "Error Creating Account"
     else:
         status = 400
         response["MESSAGE"]= "Enter both email and password"
