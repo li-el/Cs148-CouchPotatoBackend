@@ -122,7 +122,10 @@ def signup():
             status = 200
         except Exception as e:
             status = 400
-            response["MESSAGE"] = str(e)
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = "There was an error creating this account"
        # except requests.exceptions.HTTPError as error:
        #     error_json = e.args[1]
        #     error = json.loads(error_json)['error']['message']
