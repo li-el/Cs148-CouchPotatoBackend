@@ -6,7 +6,7 @@
 '''
 
 import os, json
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, session
 from pyrebase import pyrebase
 #use this if linking to a reaact app on the same server
 #app = Flask(__name__, static_folder='./build', static_url_path='/')
@@ -86,6 +86,7 @@ def login():
         try:
             auth = firebase.auth()
             user = auth.sign_in_with_email_and_password(email, password)
+            session['usr'] = user
             response["MESSAGE"]= "Login Succesful"
             status = 200
         except Exception as e:
@@ -116,12 +117,9 @@ def saveRoom():
         room = data['room']
         if room:
             try:
-                user = firebase.auth().current_user['localId']
-                response["MESSAGE"] = "1"
+                user = session['usr']['localId']
                 db = firebase.database()
-                response["MESSAGE"] = "2"
                 db.child(user).push(room)
-                response["MESSAGE"] = "3"
                 #db.push(room)
                 response["MESSAGE"]= "Room Successfully saved"
                 status = 200
@@ -160,6 +158,7 @@ def signup():
         try:
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
+            session['usr'] = user
             db = firebase.database()
             db.child(user['localId']).set("room")
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
