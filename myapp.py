@@ -11,7 +11,6 @@ from pyrebase import pyrebase
 #use this if linking to a reaact app on the same server
 #app = Flask(__name__, static_folder='./build', static_url_path='/')
 app = Flask(__name__)
-app.secret_key = '\xa5\xcd\xe4\x12WAw\xde\x00n\x18o}~\xb3:\x7fC\x04\xfe\x82\xa2\xdf\x9b'
 DEBUG=True
 
 config = {
@@ -87,7 +86,7 @@ def login():
         try:
             auth = firebase.auth()
             user = auth.sign_in_with_email_and_password(email, password)
-            session['usr'] = user['localId']
+            response['USER'] = user['localId']
             response["MESSAGE"]= "Login Succesful"
             status = 200
         except Exception as e:
@@ -116,9 +115,9 @@ def saveRoom():
             except ValueError:
                 return jsonify({"MESSAGE": "JSON load error"}),405
         room = data['room']
+        user = data['user']
         if room:
             try:
-                user = session.get('usr')
                 db = firebase.database()
                 db.child(user).push(room)
                 #db.push(room)
@@ -158,10 +157,10 @@ def signup():
         try:
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
-            session['usr'] = user['localId']
             db = firebase.database()
             db.child(user['localId']).set("room")
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
+            response['USER'] = user['localId']
             status = 200
         except Exception as e:
             status = 400
