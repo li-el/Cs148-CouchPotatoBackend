@@ -99,6 +99,39 @@ def login():
         response["MESSAGE"]= "Incorrect Username or Password"
     return jsonify(response), status
 
+
+
+@app.route('/api/saveroom/', methods['POST'])
+def saveRoom():
+    response = {}
+    #only accept json content type
+    if request.headers['content-type'] != 'application/json':
+        return jsonify({"MESSAGE": "invalid content-type"}),400
+    else:
+        try:
+            data = json.loads(request.data)
+        except ValueError:
+            return jsonify({"MESSAGE": "JSON load error"}),405
+    room = data['email']
+    if room:
+        try:
+            user = firebase.auth().currentUser
+            db = firebase.database()
+            db.child('users').child(user).push(room)
+            response["MESSAGE"]= "Room Successfully saved"
+            status = 200
+        except Exception as e:
+            status = 400
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = "There was an error saving the room"
+    else:
+        status = 400
+        response["MESSAGE"]= "Invalid Room Object"
+    return jsonify(response), status
+
+
 @app.route('/api/signup/', methods=['POST'])
 def signup():
     
