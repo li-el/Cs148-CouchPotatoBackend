@@ -165,7 +165,7 @@ def signup():
             try:
                 response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
             except:
-                response["MESSAGE"] = "There was an error creating this account"
+                response["MESSAGE"] = str(e)
     else:
         status = 400
         response["MESSAGE"]= "Enter both email and password"
