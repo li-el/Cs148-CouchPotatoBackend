@@ -116,7 +116,7 @@ def saveRoom():
         room = data['room']
         if room:
             try:
-                user = firebase.auth().current_user['userId']
+                user = firebase.auth().current_user['localId']
                 db = firebase.database()
                 db.child(user).push(room)
                 #db.push(room)
@@ -157,7 +157,7 @@ def signup():
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
             db = firebase.database()
-            db.push(user['userId'])
+            db.push(user['localId'])
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
             status = 200
         except Exception as e:
