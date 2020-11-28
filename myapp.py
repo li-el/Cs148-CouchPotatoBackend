@@ -11,6 +11,7 @@ from pyrebase import pyrebase
 #use this if linking to a reaact app on the same server
 #app = Flask(__name__, static_folder='./build', static_url_path='/')
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 DEBUG=True
 
 config = {
