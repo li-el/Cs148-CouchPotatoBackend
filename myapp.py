@@ -116,10 +116,10 @@ def saveRoom():
         room = data['room']
         if room:
             try:
-                #user = firebase.auth().currentUser
+                user = firebase.auth().currentUser
                 db = firebase.database()
-                #db.child('users').child(user).push(room)
-                db.push(room)
+                db.child('users').child(user).push(room)
+                #db.push(room)
                 response["MESSAGE"]= "Room Successfully saved"
                 status = 200
             except Exception as e:
