@@ -117,11 +117,11 @@ def saveRoom():
         if room:
             try:
                 user = firebase.auth().current_user['localId']
-                response["MESSAGE"] += "1"
+                response["MESSAGE"] = "1"
                 db = firebase.database()
-                response["MESSAGE"] += "2"
+                response["MESSAGE"] = "2"
                 db.child(user).push(room)
-                response["MESSAGE"] += "3"
+                response["MESSAGE"] = "3"
                 #db.push(room)
                 response["MESSAGE"]= "Room Successfully saved"
                 status = 200
@@ -130,7 +130,8 @@ def saveRoom():
                 try:
                     response["MESSAGE"] += str(json.loads(e.args[1])['error']['message'])
                 except:
-                    response["MESSAGE"] += str(e)
+                    pass
+                    #response["MESSAGE"] = str(e)
         else:
             status = 400
             response["MESSAGE"]= "Invalid Room Object"
