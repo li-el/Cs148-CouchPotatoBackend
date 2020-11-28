@@ -101,7 +101,7 @@ def login():
 
 
 
-@app.route('/api/saveroom/', methods['POST'])
+@app.route('/api/saveroom/', methods=['POST'])
 def saveRoom():
     response = {}
     #only accept json content type
