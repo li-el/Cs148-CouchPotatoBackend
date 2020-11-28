@@ -87,7 +87,7 @@ def login():
         try:
             auth = firebase.auth()
             user = auth.sign_in_with_email_and_password(email, password)
-            session['usr'] = user
+            session['usr'] = user['localId']
             response["MESSAGE"]= "Login Succesful"
             status = 200
         except Exception as e:
@@ -118,7 +118,7 @@ def saveRoom():
         room = data['room']
         if room:
             try:
-                user = session['usr']['localId']
+                user = session['usr']
                 db = firebase.database()
                 db.child(user).push(room)
                 #db.push(room)
@@ -127,10 +127,9 @@ def saveRoom():
             except Exception as e:
                 status = 400
                 try:
-                    response["MESSAGE"] += str(json.loads(e.args[1])['error']['message'])
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
                 except:
-                    pass
-                    #response["MESSAGE"] = str(e)
+                    response["MESSAGE"] = str(e)
         else:
             status = 400
             response["MESSAGE"]= "Invalid Room Object"
@@ -159,7 +158,7 @@ def signup():
         try:
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
-            session['usr'] = user
+            session['usr'] = user['localId']
             db = firebase.database()
             db.child(user['localId']).set("room")
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
