@@ -128,9 +128,9 @@ def saveRoom():
             except Exception as e:
                 status = 400
                 try:
-                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                    response["MESSAGE"] += str(json.loads(e.args[1])['error']['message'])
                 except:
-                    response["MESSAGE"] = str(e)
+                    response["MESSAGE"] += str(e)
         else:
             status = 400
             response["MESSAGE"]= "Invalid Room Object"
