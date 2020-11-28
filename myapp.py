@@ -157,7 +157,7 @@ def signup():
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
             db = firebase.database()
-            db.child(user['localId']).setValue("")
+            db.child(user['localId']).set("room")
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
             status = 200
         except Exception as e:
