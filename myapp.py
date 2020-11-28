@@ -118,7 +118,7 @@ def saveRoom():
         room = data['room']
         if room:
             try:
-                user = session['usr']
+                user = session.get('usr')
                 db = firebase.database()
                 db.child(user).push(room)
                 #db.push(room)
