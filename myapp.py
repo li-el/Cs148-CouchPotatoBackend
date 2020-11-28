@@ -117,8 +117,11 @@ def saveRoom():
         if room:
             try:
                 user = firebase.auth().current_user['localId']
+                response["MESSAGE"] += "1"
                 db = firebase.database()
+                response["MESSAGE"] += "2"
                 db.child(user).push(room)
+                response["MESSAGE"] += "3"
                 #db.push(room)
                 response["MESSAGE"]= "Room Successfully saved"
                 status = 200
