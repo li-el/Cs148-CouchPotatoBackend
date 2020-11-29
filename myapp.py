@@ -157,7 +157,7 @@ def passRoom():
     if room:
         try:
             db = firebase.database()
-            response["ROOMKEY"] = db.child(user).push(room)
+            response["ROOMKEY"] = db.child(user).push(room)["names"]
             #db.push(room)
             response["MESSAGE"]= "Room Successfully saved"
             status = 200
