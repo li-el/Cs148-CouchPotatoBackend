@@ -139,6 +139,78 @@ def saveRoom():
         return jsonify(response), status
     return jsonify(response), status
 
+@app.route('/api/roomname/', methods=['POST'])
+def roomName():
+    try:
+        response = {}
+        #only accept json content type
+        if request.headers['content-type'] != 'application/json':
+            return jsonify({"MESSAGE": "invalid content-type"}),400
+        else:
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                return jsonify({"MESSAGE": "JSON load error"}),405
+        user = data['user']
+        key = data['roomkey']
+        if key and user:
+            try:
+                db = firebase.database()
+                response["NAME"] = db.child(user).child(key)["name"]
+                #db.push(room)
+                response["MESSAGE"]= "Room Successfully saved"
+                status = 200
+            except Exception as e:
+                status = 400
+                try:
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                except:
+                    response["MESSAGE"] = str(e)
+        else:
+            status = 400
+            response["MESSAGE"]= "Invalid User or Room"
+    except Exception as e:
+        status = 400
+        response["MESSAGE"] = "There was an error somewhere"
+        return jsonify(response), status
+    return jsonify(response), status
+
+
+@app.route('/api/listrooms/', methods=['POST'])
+def listRooms():
+    try:
+        response = {}
+        #only accept json content type
+        if request.headers['content-type'] != 'application/json':
+            return jsonify({"MESSAGE": "invalid content-type"}),400
+        else:
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                return jsonify({"MESSAGE": "JSON load error"}),405
+        user = data['user']
+        if user:
+            try:
+                db = firebase.database()
+                response["LIST"] = db.child(user).shallow().get()
+                response["MESSAGE"]= "List of Room Keys returned"
+                status = 200
+            except Exception as e:
+                status = 400
+                try:
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                except:
+                    response["MESSAGE"] = str(e)
+        else:
+            status = 400
+            response["MESSAGE"]= "Invalid User Id"
+    except Exception as e:
+        status = 400
+        response["MESSAGE"] = "There was an error somewhere"
+        return jsonify(response), status
+    return jsonify(response), status
+
+
 
 @app.route('/api/passRoom/', methods=['POST'])
 def passRoom():
