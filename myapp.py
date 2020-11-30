@@ -192,10 +192,10 @@ def listRooms():
         if user:
             try:
                 db = firebase.database()
-                lists = db.child(user).shallow().get()
+                lists = db.child(user).get()
                 response["LIST"] = []
                 for room in lists.each():
-                    response["LIST"].append(room.val())
+                    response["LIST"].append(room.key())
                 response["MESSAGE"]= "List of Room Keys returned"
                 status = 200
             except Exception as e:
