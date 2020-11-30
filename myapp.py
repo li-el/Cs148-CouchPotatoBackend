@@ -152,11 +152,12 @@ def roomName():
             except ValueError:
                 return jsonify({"MESSAGE": "JSON load error"}),405
         user = data['user']
-        key = data['roomkey']
+        key = data['roomkeys']
         if key and user:
             try:
                 db = firebase.database()
-                response["NAME"] = db.child(user).child(key)["name"]
+                for name in key:
+                    response["NAME"].append(db.child(user).child(name)["name"])
                 #db.push(room)
                 response["MESSAGE"]= "Room Successfully saved"
                 status = 200
