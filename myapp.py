@@ -250,6 +250,40 @@ def passRoom():
         response["MESSAGE"]= "Enter both email and password"
     return jsonify(response), status
 
+@app.route('/api/getRoom/', methods=['POST'])
+def getRoom():
+
+    response = {}
+    #only accept json content type
+    if request.headers['content-type'] != 'application/json':
+        return jsonify({"MESSAGE": "invalid content-type"}),400
+    else:
+        try:
+            data = json.loads(request.data)
+        except ValueError:
+            return jsonify({"MESSAGE": "JSON load error"}),405
+    room = data['roomkey']
+    user = data['user']
+    if room:
+        try:
+            db = firebase.database()
+            response["ROOM"] = db.child(user).get(room).val()
+            #db.push(room)
+            response["MESSAGE"]= "Room Successfully saved"
+            status = 200
+        except Exception as e:
+            status = 400
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = str(e)
+    else:
+        status = 400
+        response["MESSAGE"]= "Enter both email and password"
+    return jsonify(response), status
+
+
+
 @app.route('/api/signup/', methods=['POST'])
 def signup():
     
