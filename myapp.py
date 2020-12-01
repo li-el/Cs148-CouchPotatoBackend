@@ -199,7 +199,7 @@ def listRooms():
                 for room in lists.each():
                     response["LIST"].append(room.key())
                 for name in response["LIST"]:
-                    response["NAME"].append(db.child(user).child(name)["name"])
+                    response["NAME"].append(db.child(user).child(name).val()["name"])
                 response["MESSAGE"]= "List of Room Keys returned"
                 status = 200
             except Exception as e:
