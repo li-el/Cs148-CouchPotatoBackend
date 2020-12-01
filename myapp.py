@@ -198,7 +198,7 @@ def listRooms():
                 response["NAME"] = []
                 for room in lists.each():
                     response["LIST"].append(room.key())
-                    response["NAME"].append(room.val())
+                    response["NAME"].append(room.val()['name'])
                 response["MESSAGE"]= "List of Room Keys returned"
                 status = 200
             except Exception as e:
