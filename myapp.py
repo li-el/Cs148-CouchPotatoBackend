@@ -195,6 +195,7 @@ def listRooms():
                 db = firebase.database()
                 lists = db.child(user).get()
                 response["LIST"] = []
+                response["NAME"] = []
                 for room in lists.each():
                     response["LIST"].append(room.key())
                 for name in response["LIST"]:
