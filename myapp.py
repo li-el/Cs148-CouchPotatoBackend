@@ -267,7 +267,7 @@ def getRoom():
     if room:
         try:
             db = firebase.database()
-            response["ROOM"] = db.child(user).get(room).val()
+            response["ROOM"] = db.child(user).get(room)
             #db.push(room)
             response["MESSAGE"]= "Room Successfully saved"
             status = 200
