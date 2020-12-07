@@ -196,7 +196,7 @@ def listRooms():
                 lists = db.child(user).get()
                 response["LIST"] = []
                 response["NAME"] = []
-                if lists != None:
+                if lists.each() != None:
                     for room in lists.each():
                         response["LIST"].append(room.key())
                         response["NAME"].append(room.val()['name'])
