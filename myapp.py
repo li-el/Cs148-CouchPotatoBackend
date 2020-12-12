@@ -6,7 +6,7 @@
 '''
 
 import os, json
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, session
 from pyrebase import pyrebase
 #use this if linking to a reaact app on the same server
 #app = Flask(__name__, static_folder='./build', static_url_path='/')
@@ -86,6 +86,7 @@ def login():
         try:
             auth = firebase.auth()
             user = auth.sign_in_with_email_and_password(email, password)
+            response['USER'] = user['localId']
             response["MESSAGE"]= "Login Succesful"
             status = 200
         except Exception as e:
@@ -98,6 +99,191 @@ def login():
         status = 400
         response["MESSAGE"]= "Incorrect Username or Password"
     return jsonify(response), status
+
+
+
+@app.route('/api/saveroom/', methods=['POST'])
+def saveRoom():
+    try:
+        response = {}
+        #only accept json content type
+        if request.headers['content-type'] != 'application/json':
+            return jsonify({"MESSAGE": "invalid content-type"}),400
+        else:
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                return jsonify({"MESSAGE": "JSON load error"}),405
+        room = data['room']
+        user = data['user']
+        key = data['roomkey']
+        if room:
+            try:
+                db = firebase.database()
+                db.child(user).child(key).set(room)
+                #db.push(room)
+                response["MESSAGE"]= "Room Successfully saved"
+                status = 200
+            except Exception as e:
+                status = 400
+                try:
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                except:
+                    response["MESSAGE"] = str(e)
+        else:
+            status = 400
+            response["MESSAGE"]= "Invalid Room Object"
+    except Exception as e:
+        status = 400
+        response["MESSAGE"] = "There was an error somewhere"
+        return jsonify(response), status
+    return jsonify(response), status
+
+@app.route('/api/roomname/', methods=['POST'])
+def roomName():
+    try:
+        response = {}
+        #only accept json content type
+        if request.headers['content-type'] != 'application/json':
+            return jsonify({"MESSAGE": "invalid content-type"}),400
+        else:
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                return jsonify({"MESSAGE": "JSON load error"}),405
+        user = data['user']
+        key = data['roomkeys']
+        if key and user:
+            try:
+                db = firebase.database()
+                for name in key:
+                    response["NAME"].append(db.child(user).child(name)["name"])
+                #db.push(room)
+                response["MESSAGE"]= "Room Successfully saved"
+                status = 200
+            except Exception as e:
+                status = 400
+                try:
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                except:
+                    response["MESSAGE"] = str(e)
+        else:
+            status = 400
+            response["MESSAGE"]= "Invalid User or Room"
+    except Exception as e:
+        status = 400
+        response["MESSAGE"] = "There was an error somewhere"
+        return jsonify(response), status
+    return jsonify(response), status
+
+
+@app.route('/api/listrooms/', methods=['POST'])
+def listRooms():
+    try:
+        response = {}
+        #only accept json content type
+        if request.headers['content-type'] != 'application/json':
+            return jsonify({"MESSAGE": "invalid content-type"}),400
+        else:
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                return jsonify({"MESSAGE": "JSON load error"}),405
+        user = data['user']
+        if user:
+            try:
+                db = firebase.database()
+                lists = db.child(user).get()
+                response["LIST"] = []
+                response["NAME"] = []
+                if lists.each() != None:
+                    for room in lists.each():
+                        response["LIST"].append(room.key())
+                        response["NAME"].append(room.val()['name'])
+                response["MESSAGE"]= "List of Room Keys returned"
+                status = 200
+            except Exception as e:
+                status = 400
+                try:
+                    response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+                except:
+                    response["MESSAGE"] = str(e)
+        else:
+            status = 400
+            response["MESSAGE"]= "Invalid User Id"
+    except Exception as e:
+        status = 400
+        response["MESSAGE"] = "There was an error somewhere"
+        return jsonify(response), status
+    return jsonify(response), status
+
+
+
+@app.route('/api/passRoom/', methods=['POST'])
+def passRoom():
+
+    response = {}
+    #only accept json content type
+    if request.headers['content-type'] != 'application/json':
+        return jsonify({"MESSAGE": "invalid content-type"}),400
+    else:
+        try:
+            data = json.loads(request.data)
+        except ValueError:
+            return jsonify({"MESSAGE": "JSON load error"}),405
+    room = data['room']
+    user = data['user']
+    if room:
+        try:
+            db = firebase.database()
+            response["ROOMKEY"] = db.child(user).push(room)["name"]
+            #db.push(room)
+            response["MESSAGE"]= "Room Successfully saved"
+            status = 200
+        except Exception as e:
+            status = 400
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = str(e)
+    else:
+        status = 400
+        response["MESSAGE"]= "Enter both email and password"
+    return jsonify(response), status
+
+@app.route('/api/getRoom/', methods=['POST'])
+def getRoom():
+
+    response = {}
+    #only accept json content type
+    if request.headers['content-type'] != 'application/json':
+        return jsonify({"MESSAGE": "invalid content-type"}),400
+    else:
+        try:
+            data = json.loads(request.data)
+        except ValueError:
+            return jsonify({"MESSAGE": "JSON load error"}),405
+    room = data['roomkey']
+    user = data['user']
+    if room:
+        try:
+            db = firebase.database()
+            response["ROOM"] = db.child(user).child(room).get().val()
+            #db.push(room)
+            response["MESSAGE"]= "Room Successfully saved"
+            status = 200
+        except Exception as e:
+            status = 400
+            try:
+                response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
+            except:
+                response["MESSAGE"] = str(e)
+    else:
+        status = 400
+        response["MESSAGE"]= "Enter both email and password"
+    return jsonify(response), status
+
+
 
 @app.route('/api/signup/', methods=['POST'])
 def signup():
@@ -117,14 +303,17 @@ def signup():
         try:
             auth = firebase.auth()
             user = auth.create_user_with_email_and_password(email, password)
+            db = firebase.database()
+            db.child(user['localId']).set("room")
             response["MESSAGE"]= "Account Created email {} password {}".format(email,password)
+            response['USER'] = user['localId']
             status = 200
         except Exception as e:
             status = 400
             try:
                 response["MESSAGE"] = str(json.loads(e.args[1])['error']['message'])
             except:
-                response["MESSAGE"] = "There was an error creating this account"
+                response["MESSAGE"] = str(e)
     else:
         status = 400
         response["MESSAGE"]= "Enter both email and password"
